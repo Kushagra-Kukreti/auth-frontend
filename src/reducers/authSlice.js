@@ -32,9 +32,13 @@ const initialState = {
 };
 
 export const signUpUser = createAsyncThunk("signUpUser", async (userInfo) => {
-  const response = await AuthApi.signUpUser(userInfo);
-  localStorage.setItem("accessToken", response.data.data.accessToken);
-  return response.data;
+  try {
+    const response = await AuthApi.signUpUser(userInfo);
+    localStorage.setItem("accessToken", response.data.data.accessToken);
+    return response.data;
+  } catch (error) {
+    throw new Error("Cant sign in user");
+  }
 });
 export const loginUser = createAsyncThunk("loginUser", async (loginInfo) => {
   const response = await AuthApi.logInUser(loginInfo);
@@ -54,7 +58,7 @@ const auth = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(signUpUser.pending, (state, action) => {
-      state.signUp.isLoading = false;
+      state.signUp.isLoading = true;
     });
     builder.addCase(signUpUser.fulfilled, (state, action) => {
       (state.signUp.isLoading = false),

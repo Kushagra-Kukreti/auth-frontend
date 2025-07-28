@@ -2,11 +2,10 @@ import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { signUpUser } from "../reducers/authSlice";
-import { EMAIL_VALIDATOR } from "../constants";
 import { Avatar } from "@mui/material";
 
 const Signup = () => {
-  const navigate = useNavigate();
+  
   const dispatch = useDispatch();
   const [form, setForm] = useState({
     avatar:null,
@@ -17,8 +16,10 @@ const Signup = () => {
   });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const {isLoading:loading} = useSelector(state=>state.auth.signUp)
+  const {isLoading} = useSelector(state=>state.auth.signUp)
   const avatarRef = useRef();
+  const [previewImage,setPreviewImage] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,7 +32,13 @@ const Signup = () => {
 
   const handleUpload = (e)=>{
     const file = e.target.files[0];
-    setForm({...form,avatar:file})
+    if(file){
+    console.log("in file if ",file); 
+    setPreviewImage(URL.createObjectURL(file))
+    setForm({...form,["avatar"]:file})
+    console.log("formData is::",form);
+    
+    }
   }
 
   const validate = () => {
@@ -49,8 +56,18 @@ const Signup = () => {
     e.preventDefault();
     const foundErrs = validate();
     if (Object.keys(foundErrs).length) return setErrors(foundErrs);
-    dispatch(signUpUser(form))
-    navigate("/dashboard");
+    const formData = new FormData();
+    formData.append("avatar",form.avatar);
+    formData.append("fullName",form.fullName);
+    formData.append("username",form.username);
+    formData.append("email",form.email);
+    formData.append("password",form.password);
+    try {
+      await dispatch(signUpUser(formData)).unwrap()
+      navigate("/dashboard")
+    } catch (error) {
+      
+    }
   };
 
   return (
@@ -64,6 +81,7 @@ const Signup = () => {
         onClick={handleAvatarClick}
         className="mx-auto cursor-pointer" 
         alt="Upload your avatar"
+        src={previewImage}
         sx={{ width: 70, height: 70 }}
         />
         <input
@@ -141,10 +159,10 @@ const Signup = () => {
         {/* Submit */}
         <button
           type="submit"
-          disabled={loading}
+          disabled={isLoading}
           className="w-full rounded-md bg-indigo-600 py-2 font-semibold text-white disabled:opacity-60 cursor-pointer hover:bg-indigo-700"
         >
-          {loading ? "Signing up…" : "Sign Up"}
+          {isLoading ? "Signing up…" : "Sign Up"}
         </button>
 
         {/* Switch to login */}
