@@ -22,7 +22,12 @@ const Header = () => {
           >
             Settings
           </Link>
-          <Link
+          {localStorage.getItem('accessToken')?<Link
+            to="/login"
+            className="text-gray-700 hover:text-blue-600 transition"
+          >
+            Logout
+          </Link>:<><Link
             to="/login"
             className="text-gray-700 hover:text-blue-600 transition"
           >
@@ -33,7 +38,7 @@ const Header = () => {
             className="text-gray-700 hover:text-blue-600 transition"
           >
             Signup
-          </Link>
+          </Link></>}
         </nav>
       </div>
     </header>

@@ -1,57 +1,76 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {  logoutUser } from "../reducers/authSlice";
+import { logoutUser } from "../reducers/authSlice";
 import { fetchUser } from "../reducers/userSlice";
 
 const Dashboard = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {data:user} = useSelector(state=>state.user.data)
+  const { data: user } = useSelector((state) => state.user.data);
 
-  useEffect(()=>{console.log("user is ",user);
-  },[])
   useEffect(() => {
     dispatch(fetchUser());
-  }, []);
+  }, [dispatch]);
 
   const handleLogout = () => {
-    dispatch(logoutUser())
-    navigate("/")
+    dispatch(logoutUser());
+    navigate("/");
   };
 
-  const handleProfileClick = ()=>{
-    navigate("/profile")
-  }
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
 
-  if (loading)
+  const formatDate = (isoDate) => {
+    if (!isoDate) return "-";
+    const date = new Date(isoDate);
+    return date.toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  if (!user) {
     return (
       <p className="text-center mt-10 text-gray-600">Loading dashboard...</p>
     );
-  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="bg-white shadow-lg rounded-2xl p-8 max-w-md w-full">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Welcome, {user?.fullName || user?.email || "User"} 🎉
+      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md text-center">
+        <img
+          src={user.avatar}
+          alt="User Avatar"
+          className="w-24 h-24 rounded-full mx-auto mb-4 shadow-md object-cover"
+        />
+        <h2 className="text-2xl font-bold text-gray-800 mb-1">
+          {user.fullName || "Anonymous User"}
         </h2>
-        <p className="text-gray-600 mb-6">Email: {user?.email}</p>
-        <div className="flex gap-1">
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-md transition cursor-pointer"
-        >
-          Logout
-        </button>
-        <button
-          onClick={handleProfileClick}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-md transition cursor-pointer"
-        >
-          Profile
-        </button>
+        <p className="text-gray-500 text-sm mb-4">@{user.username}</p>
+        <p className="text-gray-700 mb-2">
+          <span className="font-medium">Email:</span> {user.email}
+        </p>
+        <p className="text-gray-700 mb-6">
+          <span className="font-medium">Joined:</span>{" "}
+          {formatDate(user.createdAt)}
+        </p>
+
+        <div className="flex gap-3 justify-center">
+          <button
+            onClick={handleProfileClick}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-md transition cursor-pointer"
+          >
+            View Profile
+          </button>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-md transition cursor-pointer"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginUser} from "../reducers/authSlice";
+import { loginUser, logoutUser} from "../reducers/authSlice";
 import { fetchUser } from "../reducers/userSlice";
 import { Avatar } from "@mui/material";
  
@@ -14,7 +14,11 @@ const Profile = () => {
   useEffect(()=>{
     dispatch(fetchUser())
   },[])
-
+   
+  const handleLogout = async()=>{
+    await dispatch(logoutUser()).unwrap()
+    navigate("/login")
+  }
   // derived data
   const memberSince =
     user?.createdAt && new Date(user.createdAt).toLocaleDateString();
@@ -64,7 +68,7 @@ const Profile = () => {
             Account Settings
           </button>
           <button
-            onClick={ ()=>dispatch(loginUser())}
+            onClick={handleLogout}
             className="rounded-md bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700 cursor-pointer "
           >
             Log Out

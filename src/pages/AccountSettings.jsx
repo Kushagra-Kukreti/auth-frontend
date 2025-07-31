@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser } from '../reducers/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const AccountSettings = () => {
   const {data:userInfo} = useSelector(state=>state.user.data)
@@ -10,6 +11,7 @@ const AccountSettings = () => {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const dispatch = useDispatch()
+  const navigate = useNavigate();
   useEffect(()=>{dispatch(fetchUser())},[])
 
   useEffect(()=>{
@@ -78,7 +80,7 @@ const AccountSettings = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition cursor-pointer"
           >
             Update Profile
           </button>
@@ -86,8 +88,8 @@ const AccountSettings = () => {
 
         <div className="mt-6 text-center">
           <button
-            className="text-sm text-blue-600 hover:underline"
-            onClick={() => alert("Redirect to password update")}
+            className="text-sm text-blue-600 hover:underline cursor-pointer"
+            onClick={() => navigate("/change-password")}
           >
             Change Password
           </button>
