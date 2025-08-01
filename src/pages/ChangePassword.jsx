@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changePassword } from "../reducers/userSlice";
 
 const ChangePassword = () => {
@@ -10,6 +10,7 @@ const ChangePassword = () => {
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const {data,isLoading,error:changePasswordError} = useSelector((state)=>state.user.changePassword)
   const handleChangePassword = async(e) => {
     setError("")
     e.preventDefault();
@@ -20,7 +21,11 @@ const ChangePassword = () => {
       oldPassword:currentPassword, 
       newPassword:newPassword
     }
-    await dispatch(changePassword(formData)).unwrap();
+    try {
+      await dispatch(changePassword(formData)).unwrap();
+    } catch (error) {
+      setError(changePasswordError)
+    }
 
   };
 

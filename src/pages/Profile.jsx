@@ -8,16 +8,28 @@ import { Avatar } from "@mui/material";
 const Profile = () => {
   const navigate = useNavigate();
   const { data: user,isLoading:loading } = useSelector((state) => state.user.fetchUser.data);
+  const {data,error:logoutError,isLoading:isLogoutLoading} = useSelector((state)=>state.auth.logOut)
   const [err, setErr] = useState("");
   const dispatch = useDispatch();
   
-  useEffect(()=>{
-    dispatch(fetchUser())
-  },[])
+   const getUser = async()=>{
+   try {
+    await dispatch(fetchUser()).unwrap();
+   } catch (error) {
+    setErr(fetchUserError)
+   }
+  }
+  useEffect(() => {
+     getUser();
+  }, []);
    
   const handleLogout = async()=>{
-    await dispatch(logoutUser()).unwrap()
-    navigate("/login")
+   try {
+     await dispatch(logoutUser()).unwrap()
+     navigate("/login")
+   } catch (error) {
+     //set up a toast message
+   }
   }
   // derived data
   const memberSince =

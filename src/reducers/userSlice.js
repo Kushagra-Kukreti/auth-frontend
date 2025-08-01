@@ -55,7 +55,7 @@ const user = createSlice({
     builder.addCase(fetchUser.rejected, (state, action) => {
       state.fetchUser.isLoading = false;
       state.fetchUser.isError = true;
-      state.fetchUser.error = action.payload;
+      state.fetchUser.error = action.error.message;
     });
     builder.addCase(updateInfo.pending, (state, action) => {
       state.updateInfo.isLoading = true;
@@ -68,7 +68,7 @@ const user = createSlice({
     builder.addCase(updateInfo.rejected, (state, action) => {
       state.updateInfo.isLoading = false;
       state.updateInfo.isError = true;
-      state.updateInfo.error = action.payload;
+      state.updateInfo.error = action.error.message;
     });
     builder.addCase(changePassword.pending, (state, action) => {
       state.changePassword.isLoading = true;
@@ -81,7 +81,7 @@ const user = createSlice({
     builder.addCase(changePassword.rejected, (state, action) => {
       state.changePassword.isLoading = false;
       state.changePassword.isError = true;
-      state.changePassword.error = action.payload;
+      state.changePassword.error = action.error.message;
     });
   },
 });

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../reducers/authSlice";
@@ -7,14 +7,27 @@ import { fetchUser } from "../reducers/userSlice";
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data:user,isLoading,isSuccess } = useSelector((state) => state.user.fetchUser?.data);
+  const [error,setError] = useState("")
+  const {data,isLoading,isSuccess,error:fetchUserError } = useSelector((state) => state.user.fetchUser);
+  const user = data.data;
+  const getUser = async()=>{
+   try {
+    await dispatch(fetchUser()).unwrap();
+   } catch (error) {
+    setError(fetchUserError)
+   }
+  }
   useEffect(() => {
-    dispatch(fetchUser());
+     getUser();
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    navigate("/");
+  const handleLogout = async() => {
+   try {
+     await dispatch(logoutUser()).unwrap();
+     navigate("/");
+   } catch (error) {
+     //set toast message - error while logging out 
+   }
   };
 
   const handleProfileClick = () => {
@@ -31,7 +44,7 @@ const Dashboard = () => {
     });
   };
 
-  if (!user) {
+  if (isLoading) {
     return (
       <p className="text-center mt-10 text-gray-600">Loading dashboard...</p>
     );
@@ -41,20 +54,20 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md text-center">
         <img
-          src={user.avatar}
+          src={user?.avatar}
           alt="User Avatar"
           className="w-24 h-24 rounded-full mx-auto mb-4 shadow-md object-cover"
         />
         <h2 className="text-2xl font-bold text-gray-800 mb-1">
-          {user.fullName || "Anonymous User"}
+          {user?.fullName || "Anonymous User"}
         </h2>
-        <p className="text-gray-500 text-sm mb-4">@{user.username}</p>
+        <p className="text-gray-500 text-sm mb-4">@{user?.username}</p>
         <p className="text-gray-700 mb-2">
-          <span className="font-medium">Email:</span> {user.email}
+          <span className="font-medium">Email:</span> {user?.email}
         </p>
         <p className="text-gray-700 mb-6">
           <span className="font-medium">Joined:</span>{" "}
-          {formatDate(user.createdAt)}
+          {formatDate(user?.createdAt)}
         </p>
 
         <div className="flex gap-3 justify-center">

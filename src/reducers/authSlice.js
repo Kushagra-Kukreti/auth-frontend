@@ -8,7 +8,6 @@ const initialState = {
     error: null,
     isSuccess: false,
     successMessage: "",
-    errorMessage: "",
     data: {},
   },
   login: {
@@ -17,7 +16,6 @@ const initialState = {
     error: null,
     isSuccess: false,
     successMessage: "",
-    errorMessage: "",
     data: {},
   },
   logOut: {
@@ -36,7 +34,6 @@ export const signUpUser = createAsyncThunk("signUpUser", async (userInfo) => {
     const response = await AuthApi.signUpUser(userInfo);
     localStorage.setItem("accessToken", response.data.data.accessToken);
     console.log("token after setting ",localStorage.getItem('accessToken'));
-    
     return response.data;
   } catch (error) {
     throw new Error("Cant sign in user");
@@ -71,8 +68,7 @@ const auth = createSlice({
     builder.addCase(signUpUser.rejected, (state, action) => {
       (state.signUp.isLoading = false),
         (state.signUp.isError = true),
-        (state.signUp.error = action?.payload?.data),
-        (state.signUp.errorMessage = action?.payload?.message);
+        (state.signUp.error = action?.error?.message)
     });
     builder.addCase(loginUser.pending, (state, action) => {
       state.login.isLoading = false;
@@ -84,12 +80,9 @@ const auth = createSlice({
         (state.login.data = action.payload);
     });
     builder.addCase(loginUser.rejected, (state, action) => {
-      console.log("in login rejected state");
-      
       (state.login.isLoading = false),
         (state.login.isError = true),
-        (state.login.error = action?.payload?.data),
-        (state.login.errorMessage = action?.payload?.message);
+        (state.login.error = action?.error?.message)
     });
   },
 });

@@ -16,18 +16,10 @@ const Signup = () => {
   });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const {isLoading} = useSelector(state=>state.auth.signUp)
+  const {isLoading,error:signUpError} = useSelector(state=>state.auth.signUp)
   const avatarRef = useRef();
   const [previewImage,setPreviewImage] = useState(null);
   const navigate = useNavigate();
-  const [token, setToken] = useState(localStorage.getItem("accessToken"));
-  
-
-  useEffect(()=>{
-    if(token !== null){
-      navigate("/dashboard")
-    }
-  },[token])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -75,7 +67,7 @@ const Signup = () => {
       await dispatch(signUpUser(formData)).unwrap()
       navigate("/dashboard")
     } catch (error) {
-      
+      setServerError(signUpError)
     }
   };
 

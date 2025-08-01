@@ -17,6 +17,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
   const dispatch = useDispatch();
+  const {data,error:loginError,isLoading:isLoginLoading} = useSelector((state)=>state.auth.login)
 
   // ---------- helpers ----------
   const handleChange = (e) => {
@@ -35,16 +36,14 @@ const Login = () => {
   // ---------- submit ----------
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({})
     const foundErrs = validate();
     if (Object.keys(foundErrs).length) return setErrors(foundErrs);
    try {
-     console.log("form before login",form);
-     
      await dispatch(loginUser(form)).unwrap()
      navigate("/dashboard");
    } catch (error) {
-     console.log("error is:",error);
-     
+     setServerError(loginError)
    }
   };
 
@@ -107,10 +106,10 @@ const Login = () => {
         {/* Submit */}
         <button
           type="submit"
-          disabled={loading}
+          disabled={isLoginLoading}
           className="w-full rounded-md bg-indigo-600 py-2 font-semibold text-white disabled:opacity-60 cursor-pointer"
         >
-          {loading ? "Logging in…" : "Log In"}
+          {isLoginLoading ? "Logging in…" : "Log In"}
         </button>
 
         {/* Switch to signup */}
