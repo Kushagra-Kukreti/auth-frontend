@@ -35,6 +35,8 @@ export const signUpUser = createAsyncThunk("signUpUser", async (userInfo) => {
   try {
     const response = await AuthApi.signUpUser(userInfo);
     localStorage.setItem("accessToken", response.data.data.accessToken);
+    console.log("token after setting ",localStorage.getItem('accessToken'));
+    
     return response.data;
   } catch (error) {
     throw new Error("Cant sign in user");
@@ -82,6 +84,8 @@ const auth = createSlice({
         (state.login.data = action.payload);
     });
     builder.addCase(loginUser.rejected, (state, action) => {
+      console.log("in login rejected state");
+      
       (state.login.isLoading = false),
         (state.login.isError = true),
         (state.login.error = action?.payload?.data),

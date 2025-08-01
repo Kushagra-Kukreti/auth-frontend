@@ -7,7 +7,7 @@ import { Avatar } from "@mui/material";
  
 const Profile = () => {
   const navigate = useNavigate();
-  const { data: user,isLoading:loading } = useSelector((state) => state.user.data);
+  const { data: user,isLoading:loading } = useSelector((state) => state.user.fetchUser.data);
   const [err, setErr] = useState("");
   const dispatch = useDispatch();
   

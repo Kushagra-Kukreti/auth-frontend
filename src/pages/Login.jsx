@@ -1,16 +1,17 @@
-// src/pages/Login.jsx
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../reducers/authSlice";
-// import api from "../api/axiosInstance";   // axios.create({ baseURL: …, withCredentials: true })
-// import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
+  const {
+    auth
+  } = useSelector((state)=>state)
+  useEffect(()=>{
+     console.log("auth is ",auth);
+  },[])
   const navigate = useNavigate();
-  //   const { login }  = useAuth();
-
-  const [form, setForm] = useState({ identifier: "", password: "" }); // identifier = username OR email
+  const [form, setForm] = useState({ username: "", password: "" }); // identifier = username OR email
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,8 +26,8 @@ const Login = () => {
 
   const validate = () => {
     const newErrs = {};
-    if (!form.identifier.trim())
-      newErrs.identifier = "Username or email is required";
+    if (!form.username.trim())
+      newErrs.username = "Username or email is required";
     if (!form.password) newErrs.password = "Password is required";
     return newErrs;
   };
@@ -36,10 +37,15 @@ const Login = () => {
     e.preventDefault();
     const foundErrs = validate();
     if (Object.keys(foundErrs).length) return setErrors(foundErrs);
-    setLoading(true);
-    setServerError("");
-    dispatch(loginUser(form))
-    navigate("/dashboard");
+   try {
+     console.log("form before login",form);
+     
+     await dispatch(loginUser(form)).unwrap()
+     navigate("/dashboard");
+   } catch (error) {
+     console.log("error is:",error);
+     
+   }
   };
 
   // ---------- UI ----------
@@ -64,13 +70,13 @@ const Login = () => {
           <label className="block text-sm font-medium">Username or Email</label>
           <input
             type="text"
-            name="identifier"
-            value={form.identifier}
+            name="username"
+            value={form.username}
             onChange={handleChange}
             className="mt-1 w-full rounded-md border px-3 py-2 outline-none focus:ring"
           />
-          {errors.identifier && (
-            <p className="text-sm text-red-600">{errors.identifier}</p>
+          {errors.username && (
+            <p className="text-sm text-red-600">{errors.username}</p>
           )}
         </div>
 

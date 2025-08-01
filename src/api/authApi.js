@@ -13,5 +13,11 @@ export class AuthApi {
     static getMe (){
         return axiosInstance.get("/me")
     }
+    static updateInfo(info){
+        return axiosInstance.patch("/update-info",info)
+    }
+    static changePassword(info){
+        return axiosInstance.put("/change-password",info)
+    }
    
 }

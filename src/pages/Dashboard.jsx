@@ -7,11 +7,10 @@ import { fetchUser } from "../reducers/userSlice";
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data: user } = useSelector((state) => state.user.data);
-
+  const { data:user,isLoading,isSuccess } = useSelector((state) => state.user.fetchUser?.data);
   useEffect(() => {
     dispatch(fetchUser());
-  }, [dispatch]);
+  }, []);
 
   const handleLogout = () => {
     dispatch(logoutUser());

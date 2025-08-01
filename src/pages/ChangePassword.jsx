@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { changePassword } from "../reducers/userSlice";
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -7,33 +9,28 @@ const ChangePassword = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleChangePassword = (e) => {
+  const dispatch = useDispatch();
+  const handleChangePassword = async(e) => {
+    setError("")
     e.preventDefault();
-
-    setError("");
-    setSuccess("");
-
     if (newPassword !== confirmNewPassword) {
       return setError("New passwords do not match.");
     }
+    const formData = {
+      oldPassword:currentPassword, 
+      newPassword:newPassword
+    }
+    await dispatch(changePassword(formData)).unwrap();
 
-    // Mock password change
-    setTimeout(() => {
-      setSuccess("Password changed successfully!");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-    }, 1000);
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-gray-100 text-white flex items-center justify-center px-4 py-10">
       <form
         onSubmit={handleChangePassword}
-        className="bg-[#1e293b] w-full max-w-md p-8 rounded-2xl shadow-lg"
+        className="w-full max-w-md p-8 rounded-2xl shadow-lg bg-white"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center text-white">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Change Password
         </h2>
 
@@ -41,7 +38,7 @@ const ChangePassword = () => {
         {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-300 mb-1">
+          <label className="block text-sm text-gray-600 mb-1">
             Current Password
           </label>
           <input
@@ -49,23 +46,23 @@ const ChangePassword = () => {
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-md border border-gray-700 bg-[#0f172a] text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 rounded-md border border-gray-700 text-black focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-300 mb-1">New Password</label>
+          <label className="block text-sm text-gray-600 mb-1">New Password</label>
           <input
             type={showPassword ? "text" : "password"}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-md border border-gray-700 bg-[#0f172a] text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 rounded-md border border-gray-700 text-black focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-300 mb-1">
+          <label className="block text-sm text-gray-600 mb-1">
             Confirm New Password
           </label>
           <input
@@ -73,7 +70,7 @@ const ChangePassword = () => {
             value={confirmNewPassword}
             onChange={(e) => setConfirmNewPassword(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-md border border-gray-700 bg-[#0f172a] text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full px-4 py-2 rounded-md border border-gray-700 text-black focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </div>
 
@@ -85,7 +82,7 @@ const ChangePassword = () => {
             onChange={() => setShowPassword(!showPassword)}
             className="mr-2 accent-blue-600 cursor-pointer"
           />
-          <label htmlFor="showPassword" className="text-sm text-gray-400">
+          <label htmlFor="showPassword" className="text-sm text-black">
             Show Passwords
           </label>
         </div>

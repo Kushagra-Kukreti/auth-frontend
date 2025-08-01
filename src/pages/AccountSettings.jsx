@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUser } from '../reducers/userSlice';
+import { fetchUser, updateInfo } from '../reducers/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const AccountSettings = () => {
-  const {data:userInfo} = useSelector(state=>state.user.data)
+  const {data:userInfo} = useSelector(state=>state.user.fetchUser.data)
   const [user, setUser] = useState({ name:'',email:'' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
@@ -30,16 +30,11 @@ const AccountSettings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
     try {
-      const res = await axios.put("/api/users/update", user, {
-        withCredentials: true,
-      });
-      setSuccess("Account updated successfully!");
-    } catch (err) {
-      setError("Failed to update account.");
+      await dispatch(updateInfo(user)).unwrap();
+      setSuccess("Profile updated successfully");
+    } catch (error) {
+      setError("Error while updating profile")
     }
   };
 

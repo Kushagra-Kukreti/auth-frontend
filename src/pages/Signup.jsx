@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { signUpUser } from "../reducers/authSlice";
@@ -20,6 +20,14 @@ const Signup = () => {
   const avatarRef = useRef();
   const [previewImage,setPreviewImage] = useState(null);
   const navigate = useNavigate();
+  const [token, setToken] = useState(localStorage.getItem("accessToken"));
+  
+
+  useEffect(()=>{
+    if(token !== null){
+      navigate("/dashboard")
+    }
+  },[token])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,8 +44,8 @@ const Signup = () => {
     console.log("in file if ",file); 
     setPreviewImage(URL.createObjectURL(file))
     setForm({...form,["avatar"]:file})
+    setErrors((prev)=>({...prev,["avatar"]:""}))
     console.log("formData is::",form);
-    
     }
   }
 
@@ -49,6 +57,7 @@ const Signup = () => {
       newErrs.email = "Enter a valid email";
     if (form.password.length < 6)
       newErrs.password = "Password must be at least 6 characters";
+    if(form.avatar === null)newErrs.avatar = "Avatar is required";
     return newErrs;
   };
 
@@ -70,6 +79,8 @@ const Signup = () => {
     }
   };
 
+   
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
       <form
@@ -84,8 +95,12 @@ const Signup = () => {
         src={previewImage}
         sx={{ width: 70, height: 70 }}
         />
+        {errors.avatar && (
+            <p className="text-sm text-red-600 text-center">{errors.avatar}</p>
+          )}
         <input
         onChange={handleUpload}
+        name="avatar"
         hidden
         type="file"
         ref={avatarRef}
