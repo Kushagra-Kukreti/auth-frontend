@@ -5,10 +5,9 @@ import { signUpUser } from "../reducers/authSlice";
 import { Avatar } from "@mui/material";
 
 const Signup = () => {
-  
   const dispatch = useDispatch();
   const [form, setForm] = useState({
-    avatar:null,
+    avatar: null,
     fullName: "",
     username: "",
     email: "",
@@ -16,29 +15,31 @@ const Signup = () => {
   });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
-  const {isLoading,error:signUpError} = useSelector(state=>state.auth.signUp)
+  const { isLoading, error: signUpError } = useSelector(
+    (state) => state.auth.signUp
+  );
   const avatarRef = useRef();
-  const [previewImage,setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   const navigate = useNavigate();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   };
 
-  const handleAvatarClick = ()=>{
+  const handleAvatarClick = () => {
     avatarRef.current.click();
-  }
+  };
 
-  const handleUpload = (e)=>{
+  const handleUpload = (e) => {
     const file = e.target.files[0];
-    if(file){
-    console.log("in file if ",file); 
-    setPreviewImage(URL.createObjectURL(file))
-    setForm({...form,["avatar"]:file})
-    setErrors((prev)=>({...prev,["avatar"]:""}))
-    console.log("formData is::",form);
+    if (file) {
+      console.log("in file if ", file);
+      setPreviewImage(URL.createObjectURL(file));
+      setForm({ ...form, ["avatar"]: file });
+      setErrors((prev) => ({ ...prev, ["avatar"]: "" }));
+      console.log("formData is::", form);
     }
-  }
+  };
 
   const validate = () => {
     const newErrs = {};
@@ -48,7 +49,7 @@ const Signup = () => {
       newErrs.email = "Enter a valid email";
     if (form.password.length < 6)
       newErrs.password = "Password must be at least 6 characters";
-    if(form.avatar === null)newErrs.avatar = "Avatar is required";
+    if (form.avatar === null) newErrs.avatar = "Avatar is required";
     return newErrs;
   };
 
@@ -57,16 +58,16 @@ const Signup = () => {
     const foundErrs = validate();
     if (Object.keys(foundErrs).length) return setErrors(foundErrs);
     const formData = new FormData();
-    formData.append("avatar",form.avatar);
-    formData.append("fullName",form.fullName);
-    formData.append("username",form.username);
-    formData.append("email",form.email);
-    formData.append("password",form.password);
+    formData.append("avatar", form.avatar);
+    formData.append("fullName", form.fullName);
+    formData.append("username", form.username);
+    formData.append("email", form.email);
+    formData.append("password", form.password);
     try {
       await dispatch(signUpUser(formData)).unwrap();
-      navigate("/dashboard");
+        navigate("/dashboard");
     } catch (error) {
-      setServerError(error?.message)
+      setServerError(error?.message);
     }
   };
   return (
@@ -77,21 +78,21 @@ const Signup = () => {
       >
         <h2 className="text-center text-2xl font-bold">Create your account</h2>
         <Avatar
-        onClick={handleAvatarClick}
-        className="mx-auto cursor-pointer" 
-        alt="Upload your avatar"
-        src={previewImage}
-        sx={{ width: 70, height: 70 }}
+          onClick={handleAvatarClick}
+          className="mx-auto cursor-pointer"
+          alt="Upload your avatar"
+          src={previewImage}
+          sx={{ width: 70, height: 70 }}
         />
         {errors.avatar && (
-            <p className="text-sm text-red-600 text-center">{errors.avatar}</p>
-          )}
+          <p className="text-sm text-red-600 text-center">{errors.avatar}</p>
+        )}
         <input
-        onChange={handleUpload}
-        name="avatar"
-        hidden
-        type="file"
-        ref={avatarRef}
+          onChange={handleUpload}
+          name="avatar"
+          hidden
+          type="file"
+          ref={avatarRef}
         />
         {serverError && (
           <p className="rounded-md bg-red-100 p-2 text-center text-red-700">

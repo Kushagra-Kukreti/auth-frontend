@@ -1,8 +1,19 @@
 import axios from "axios";
 import { API_URL } from "../constants";
 
-export const axiosInstance = axios.create({
+const axiosInstance = axios.create({
   baseURL: API_URL,
-  timeout: 1000,
-  headers: {'Authorization': `Bearer ${localStorage?.getItem('accessToken')}`}
 })
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export {axiosInstance}

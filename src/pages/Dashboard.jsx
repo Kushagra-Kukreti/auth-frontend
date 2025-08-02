@@ -20,7 +20,7 @@ const Dashboard = () => {
    }
   }
   useEffect(() => {
-     getUser();
+    getUser();
   }, []);
 
   const handleLogout = async() => {

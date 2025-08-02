@@ -28,20 +28,10 @@ const initialState = {
     data: {},
   },
 };
- async function checkToken(){
-   return new Promise((resolve,reject)=>{
-    const token = localStorage.getItem('accessToken')
-    if(token!== null)
-    resolve("true")
-    else
-    setTimeout(checkToken,100)
-   })
- }
 export const signUpUser = createAsyncThunk("signUpUser", async (userInfo,{rejectWithValue}) => {
   try {
     const response = await AuthApi.signUpUser(userInfo);
     localStorage.setItem("accessToken", response.data.data.accessToken);
-    await checkToken();
     console.log("token after setting ",localStorage.getItem('accessToken'));
     return response.data;
   } catch (error) {

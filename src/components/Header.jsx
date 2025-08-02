@@ -1,5 +1,17 @@
-import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { logoutUser } from '../reducers/authSlice';
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = async()=>{
+     try {
+       await dispatch(logoutUser()).unwrap()
+       navigate("/login")
+     } catch (error) {
+       //set up a toast message
+     }
+    }
   return (
     <header className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -23,7 +35,7 @@ const Header = () => {
             Settings
           </Link>
           {localStorage.getItem('accessToken')?<Link
-            to="/login"
+             onClick={handleLogout}
             className="text-gray-700 hover:text-blue-600 transition"
           >
             Logout
