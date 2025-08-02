@@ -28,21 +28,34 @@ const initialState = {
     data: {},
   },
 };
-
-export const signUpUser = createAsyncThunk("signUpUser", async (userInfo) => {
+ async function checkToken(){
+   return new Promise((resolve,reject)=>{
+    const token = localStorage.getItem('accessToken')
+    if(token!== null)
+    resolve("true")
+    else
+    setTimeout(checkToken,100)
+   })
+ }
+export const signUpUser = createAsyncThunk("signUpUser", async (userInfo,{rejectWithValue}) => {
   try {
     const response = await AuthApi.signUpUser(userInfo);
     localStorage.setItem("accessToken", response.data.data.accessToken);
+    await checkToken();
     console.log("token after setting ",localStorage.getItem('accessToken'));
     return response.data;
   } catch (error) {
-    throw new Error("Cant sign in user");
+    return rejectWithValue(error.response.data)
   }
 });
-export const loginUser = createAsyncThunk("loginUser", async (loginInfo) => {
-  const response = await AuthApi.logInUser(loginInfo);
-  localStorage.setItem("accessToken", response.data.data.accessToken);
-  return response.data;
+export const loginUser = createAsyncThunk("loginUser", async (loginInfo,{rejectWithValue}) => {
+  try {
+    const response = await AuthApi.logInUser(loginInfo);
+    localStorage.setItem("accessToken", response.data.data.accessToken);
+    return response.data;
+  } catch (error) {
+     return rejectWithValue(error.response.data)
+  }
 });
 
 export const logoutUser = createAsyncThunk("logoutUser", async () => {
@@ -68,10 +81,10 @@ const auth = createSlice({
     builder.addCase(signUpUser.rejected, (state, action) => {
       (state.signUp.isLoading = false),
         (state.signUp.isError = true),
-        (state.signUp.error = action?.error?.message)
+        (state.signUp.error = action?.payload?.message)
     });
     builder.addCase(loginUser.pending, (state, action) => {
-      state.login.isLoading = false;
+      state.login.isLoading = true;
     });
     builder.addCase(loginUser.fulfilled, (state, action) => {
       (state.login.isLoading = false),
@@ -80,9 +93,24 @@ const auth = createSlice({
         (state.login.data = action.payload);
     });
     builder.addCase(loginUser.rejected, (state, action) => {
+      console.log("login response",action.error);
       (state.login.isLoading = false),
         (state.login.isError = true),
-        (state.login.error = action?.error?.message)
+        (state.login.error = action?.payload?.message)
+    });
+    builder.addCase(logoutUser.pending, (state, action) => {
+      state.logOut.isLoading = true;
+    });
+    builder.addCase(logoutUser.fulfilled, (state, action) => {
+      (state.logOut.isLoading = false),
+        (state.logOut.isSuccess = true),
+        (state.logOut.successMessage = action.payload.message),
+        (state.logOut.data = action.payload);
+    });
+    builder.addCase(logoutUser.rejected, (state, action) => {
+      (state.logOut.isLoading = false),
+        (state.logOut.isError = true),
+        (state.logOut.error = action?.payload?.message)
     });
   },
 });

@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../reducers/authSlice";
 import { fetchUser } from "../reducers/userSlice";
+import { CircularProgress } from "@mui/material";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error,setError] = useState("")
   const {data,isLoading,isSuccess,error:fetchUserError } = useSelector((state) => state.user.fetchUser);
+    const {isLoading:logoutLoading} = useSelector((state) => state.auth.logOut);
   const user = data.data;
   const getUser = async()=>{
    try {
@@ -45,9 +47,11 @@ const Dashboard = () => {
   };
 
   if (isLoading) {
-    return (
-      <p className="text-center mt-10 text-gray-600">Loading dashboard...</p>
-    );
+     return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <CircularProgress/>
+    </div>
+  );
   }
 
   return (
@@ -81,7 +85,7 @@ const Dashboard = () => {
             onClick={handleLogout}
             className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-md transition cursor-pointer"
           >
-            Logout
+            {logoutLoading?"Logging Out...":"Logout"}
           </button>
         </div>
       </div>

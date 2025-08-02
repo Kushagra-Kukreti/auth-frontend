@@ -7,9 +7,7 @@ const Login = () => {
   const {
     auth
   } = useSelector((state)=>state)
-  useEffect(()=>{
-     console.log("auth is ",auth);
-  },[])
+ 
   const navigate = useNavigate();
   const [form, setForm] = useState({ username: "", password: "" }); // identifier = username OR email
   const [errors, setErrors] = useState({});
@@ -17,13 +15,21 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
   const dispatch = useDispatch();
-  const {data,error:loginError,isLoading:isLoginLoading} = useSelector((state)=>state.auth.login)
-
+  const {loginError,isLoading:isLoginLoading } = useSelector((state)=>state.auth.login)
   // ---------- helpers ----------
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   };
+
+  useEffect(()=>{
+   setServerError(loginError)
+  },[loginError])
+
+  useEffect(()=>{
+  console.log("loading logging...",isLoginLoading);
+  
+  },[isLoginLoading])
 
   const validate = () => {
     const newErrs = {};
@@ -43,7 +49,7 @@ const Login = () => {
      await dispatch(loginUser(form)).unwrap()
      navigate("/dashboard");
    } catch (error) {
-     setServerError(loginError)
+     setServerError(error?.message)
    }
   };
 

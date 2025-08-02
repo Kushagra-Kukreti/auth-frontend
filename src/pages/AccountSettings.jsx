@@ -51,10 +51,13 @@ const AccountSettings = () => {
     }
   };
 
-  if (userLoading)
-    return (
-      <p className="text-center mt-10 text-gray-500">Loading settings...</p>
+  if (userLoading) {
+       return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <CircularProgress/>
+      </div>
     );
+    }
   if(pageError){
         return (
       <p className="text-center mt-10 text-gray-500">{pageError}</p>

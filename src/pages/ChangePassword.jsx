@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changePassword } from "../reducers/userSlice";
 
@@ -10,9 +10,10 @@ const ChangePassword = () => {
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
-  const {data,isLoading,error:changePasswordError} = useSelector((state)=>state.user.changePassword)
+  const {data,isLoading:passwordChangeLoading,error:changePasswordError} = useSelector((state)=>state.user.changePassword)
   const handleChangePassword = async(e) => {
     setError("")
+    setSuccess("")
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
       return setError("New passwords do not match.");
@@ -24,11 +25,13 @@ const ChangePassword = () => {
     try {
       await dispatch(changePassword(formData)).unwrap();
     } catch (error) {
-      setError(changePasswordError)
+      setError(error?.message)
     }
 
   };
-
+   useEffect(()=>{
+setSuccess(data?.message)
+   },[data])
   return (
     <div className="min-h-screen bg-gray-100 text-white flex items-center justify-center px-4 py-10">
       <form
@@ -96,7 +99,7 @@ const ChangePassword = () => {
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 transition py-2 rounded-md font-semibold cursor-pointer"
         >
-          Change Password
+          {passwordChangeLoading?"Changing Password...":"Change Password"}
         </button>
       </form>
     </div>

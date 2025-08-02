@@ -35,9 +35,13 @@ export const updateInfo = createAsyncThunk("updateInfo", async (info) => {
   return response.data;
 });
 
-export const changePassword = createAsyncThunk("changePassword", async (info) => {
-  const response = await AuthApi.changePassword(info);
-  return response.data;
+export const changePassword = createAsyncThunk("changePassword", async (info,{rejectWithValue}) => {
+ try {
+   const response = await AuthApi.changePassword(info);
+   return response.data;
+ } catch (error) {
+   return rejectWithValue(error?.response?.data)
+ }
 });
 
 const user = createSlice({

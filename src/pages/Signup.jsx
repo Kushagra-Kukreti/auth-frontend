@@ -20,7 +20,6 @@ const Signup = () => {
   const avatarRef = useRef();
   const [previewImage,setPreviewImage] = useState(null);
   const navigate = useNavigate();
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
@@ -64,15 +63,12 @@ const Signup = () => {
     formData.append("email",form.email);
     formData.append("password",form.password);
     try {
-      await dispatch(signUpUser(formData)).unwrap()
-      navigate("/dashboard")
+      await dispatch(signUpUser(formData)).unwrap();
+      navigate("/dashboard");
     } catch (error) {
-      setServerError(signUpError)
+      setServerError(error?.message)
     }
   };
-
-   
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
       <form
